@@ -40,7 +40,7 @@ def start(bot, update):
   bot.send_message(chat_id=update.message.chat_id,
                      parse_mode='markdown', text=message)
 
-def random (bot, update):
+def random_number (bot, update):
     # Creating a handler-function for /random command
     number = random.randint(0, 10)
     logger.info("User {} randomed number {}".format(update.effective_user["id"], number))
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     list_handler = CommandHandler('list', list)
     add_handler = CommandHandler('add', add, pass_args=True)
     foto_handler = CommandHandler('foto', foto)
-    random_handler = CommandHandler("random", random)
+    random_handler = CommandHandler("random", random_number)
 
     # Other handlers
     plain_text_handler = MessageHandler(Filters.text, plain_text)
