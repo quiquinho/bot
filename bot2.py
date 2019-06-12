@@ -42,9 +42,9 @@ def start(bot, update):
 
 def random_number (bot, update):
     # Creating a handler-function for /random command
-    number = random.randint(0, 10)
+    number = random.randint(0, 1000)
     logger.info("User {} randomed number {}".format(update.effective_user["id"], number))
-    update.message.reply_text("Random number: {}".format(number))
+    update.message.reply_text("Numero aleatorio: {}".format(number))
 
 def hello(bot, update):
   """ This function will be executed when '/hello' command is received """
