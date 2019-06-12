@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     # Other handlers
     plain_text_handler = MessageHandler(Filters.text, plain_text)
-    unknown_handler = MessageHandler(Filters.command, unknown)
+
 
 
     # Add the handlers to the bot
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(foto_handler)
     updater.dispatcher.add_handler(plain_text_handler)
     updater.dispatcher.add_handler(random_handler)
-    updater.dispatcher.add_handler(unknown_handler)
+
 
 
     run(updater)
