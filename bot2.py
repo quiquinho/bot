@@ -32,13 +32,13 @@ else :
 
 
 
+
+
 def start(bot, update):
   """ This function will be executed when '/start' command is received """
-  message = "Bienvenido al asistente personal!"
+  message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
   bot.send_message(chat_id=update.message.chat_id, text=message)
-  message = "*Comandos*\n*########*\n/start\n/hello\n/list\n/foto"
-  bot.send_message(chat_id=update.message.chat_id,
-                     parse_mode='markdown', text=message)
+ 
 
 def random_number (bot, update):
     # Creating a handler-function for /random command
@@ -84,16 +84,15 @@ def plain_text(bot, update):
                      parse_mode='markdown', text=message)
 
 
-def list (bot, update):
+def listar (bot, update):
     """ This function will be executed when plain text message is received """
     text = update.message.text
-    message = "*Comandos*\n*########*\n"
+    opciones = ''
+    for func in arrayFunciones:
+      opciones += '/'+func+'\n'
+    message = "*Comandos*\n*########*\n"+opciones
     bot.send_message(chat_id=update.message.chat_id,
                      parse_mode='markdown', text=message)
-
-
-
-
 
 
 
@@ -101,13 +100,13 @@ if __name__ == '__main__':
     logger.info("Starting bot")
     updater = Updater(TOKEN)
 
-
+    arrayFunciones = ['start','hello','list','add','foto','random']
 
 
     # Command handlers
     start_handler = CommandHandler('start', start)
     hello_handler = CommandHandler('hello', hello)
-    list_handler = CommandHandler('list', list)
+    list_handler = CommandHandler('list', listar)
     add_handler = CommandHandler('add', add, pass_args=True)
     foto_handler = CommandHandler('foto', foto)
     random_handler = CommandHandler("random", random_number)
@@ -129,4 +128,4 @@ if __name__ == '__main__':
 
 
 
-    run(updater)
+run(updater)
