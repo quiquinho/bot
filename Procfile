@@ -1,2 +1,2 @@
-bot: python serverTelegram.py
-ps:scale bot=1
+web: python serverTelegram.py
+ps:scale web=1 $PORT:5000
