@@ -15,7 +15,7 @@ logger = logging.getLogger()
 
 # Getting mode, so we could define run function for local and Heroku setup
 mode = os.getenv("MODE")
-mode = 'dev'
+# mode = 'dev'
 TOKEN = os.getenv("TOKEN")
 if mode == "dev":
     def run(updater):
