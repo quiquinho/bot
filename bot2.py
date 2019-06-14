@@ -50,7 +50,18 @@ def random_number (bot, update):
     # Creating a handler-function for /random command
     update.message.reply_text(funcion_random_number())
 
+def noticias (bot, update, args):
+    
+    disponibles = ['faro', 'marca','el_pais']
 
+
+    if len(args) == 0:
+      for medio in disponibles:
+        submenu= '/noticias %s\n'%medio
+        update.message.reply_text(submenu)
+    else:
+      for entrada in funcion_noticias(args):
+        update.message.reply_text(entrada)
 
 def track_mensajeria(bot, update, args):
   logger.info(args)
@@ -85,7 +96,7 @@ if __name__ == '__main__':
     logger.info("Starting bot")
     updater = Updater(TOKEN)
 
-    arrayFunciones = ['start','list','mensajeria','perrete','random']
+    arrayFunciones = ['start','list','mensajeria','perrete','random','noticias']
 
 
     # Command handlers
@@ -94,6 +105,7 @@ if __name__ == '__main__':
     mensajeria_handler = CommandHandler('mensajeria', track_mensajeria, pass_args=True)
     perrete_handler = CommandHandler('perrete', perrete)
     random_handler = CommandHandler("random", random_number)
+    noticias_handler = CommandHandler("noticias", noticias, pass_args=True)
 
     # Other handlers
     plain_text_handler = MessageHandler(Filters.text, plain_text)
@@ -108,6 +120,7 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(perrete_handler)
     updater.dispatcher.add_handler(plain_text_handler)
     updater.dispatcher.add_handler(random_handler)
+    updater.dispatcher.add_handler(noticias_handler)
 
 
 
