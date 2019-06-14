@@ -1,9 +1,11 @@
-import logging
+import logging, time
 import os
 import random
 import sys
 import requests
 from telegram.ext import *
+from telegram import *
+from funciones import *
 
 
 # Enabling logging
@@ -13,6 +15,7 @@ logger = logging.getLogger()
 
 # Getting mode, so we could define run function for local and Heroku setup
 mode = os.getenv("MODE")
+mode = 'dev'
 TOKEN = os.getenv("TOKEN")
 if mode == "dev":
     def run(updater):
@@ -36,53 +39,34 @@ else :
 
 def start(bot, update):
   """ This function will be executed when '/start' command is received """
-  bot.send_chat_action(chat_id=chat_id, action=telegram.ChatAction.TYPING)
+
   message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
+  bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+  time.sleep(2)
   bot.send_message(chat_id=update.message.chat_id, text=message)
  
 
 def random_number (bot, update):
     # Creating a handler-function for /random command
-    number = random.randint(0, 1000)
-    logger.info("User {} randomed number {}".format(update.effective_user["id"], number))
-    update.message.reply_text("Numero aleatorio: {}".format(number))
-
-def hello(bot, update):
-  """ This function will be executed when '/hello' command is received """
-  greeting = "Hi there, {}".format(update.effective_user.username)
-  bot.send_message(chat_id=update.message.chat_id, text=greeting)
+    update.message.reply_text(funcion_random_number())
 
 
-def add(bot, update, args):
-  """ This function will be executed when '/add arg1, arg2, ...' command is received """
 
-  # First converts the string list to a int list and then add all the elems
-  result = sum(map(int, args))
-  message = "The result is: {}".format(result)
+def track_mensajeria(bot, update, args):
+  logger.info(args)
+  message = funcion_track_mensajeria(args)
   bot.send_message(chat_id=update.message.chat_id, text=message)
 
 
-def get_url():
-  contents = requests.get('https://random.dog/woof.json').json()
-  url = contents['url'] 
-  return url
-
-def foto (bot, update):
-  
-  url = get_url()
-  bot.send_photo(chat_id=update.message.chat_id, photo=url)
+def perrete (bot, update):
+  bot.send_photo(chat_id=update.message.chat_id, photo=funcion_get_perrete())
 
 
 
 def plain_text(bot, update):
     """ This function will be executed when plain text message is received """
-    text = update.message.text
-    words_count = len(text.split())
-    letters_count = len(''.join(text).replace(' ', ''))
-    message = "Your message has {words} words and {letters} letters".format(
-        words=words_count, letters=letters_count)
     bot.send_message(chat_id=update.message.chat_id,
-                     parse_mode='markdown', text=message)
+                     parse_mode='markdown', text=funcion_contar_palabras(update.message.text))
 
 
 def listar (bot, update):
@@ -101,15 +85,14 @@ if __name__ == '__main__':
     logger.info("Starting bot")
     updater = Updater(TOKEN)
 
-    arrayFunciones = ['start','hello','list','add','foto','random']
+    arrayFunciones = ['start','list','mensajeria','perrete','random']
 
 
     # Command handlers
     start_handler = CommandHandler('start', start)
-    hello_handler = CommandHandler('hello', hello)
     list_handler = CommandHandler('list', listar)
-    add_handler = CommandHandler('add', add, pass_args=True)
-    foto_handler = CommandHandler('foto', foto)
+    mensajeria_handler = CommandHandler('mensajeria', track_mensajeria, pass_args=True)
+    perrete_handler = CommandHandler('perrete', perrete)
     random_handler = CommandHandler("random", random_number)
 
     # Other handlers
@@ -120,10 +103,9 @@ if __name__ == '__main__':
     # Add the handlers to the bot
     
     updater.dispatcher.add_handler(start_handler)
-    updater.dispatcher.add_handler(hello_handler)
-    updater.dispatcher.add_handler(add_handler)
+    updater.dispatcher.add_handler(mensajeria_handler)
     updater.dispatcher.add_handler(list_handler)
-    updater.dispatcher.add_handler(foto_handler)
+    updater.dispatcher.add_handler(perrete_handler)
     updater.dispatcher.add_handler(plain_text_handler)
     updater.dispatcher.add_handler(random_handler)
 
