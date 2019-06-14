@@ -5,7 +5,7 @@ import requests
 import trackingmoreclass
 import json
 from xml.etree import ElementTree as etree
-
+from mydb import mydb
 tracker = trackingmoreclass.track
 
 
@@ -33,27 +33,42 @@ def funcion_track_mensajeria(text):
   salida = json.loads(result)
   return salida
 
-def funcion_noticias(fuente):
+def funcion_noticias(fuente='none'):
   
-  dictUrls = {'faro':'https://www.farodevigo.es/elementosInt/rss/1',
-              'marca':'https://e00-marca.uecdn.es/rss/portada.xml',
-              'el_pais':'https://elpais.com/rss/elpais/portada_completo.xml'}
+  dictUrls = {}
+  bd = mydb()
+  news = bd.query('SELECT * FROM tblServerRssNoticias')
+  bd.close()
 
-  salida = requests.get(dictUrls[fuente[0]])
-  #entire feed
-  reddit_root = etree.fromstring(salida.text)
-  item = reddit_root.findall('channel/item')
-  # print (item)
+  for medio in news :
+    dictUrls.update({medio[0]:medio[1]})
+  
+  if fuente == 'none': 
+    submenu=[]
+    disponibles=dictUrls.keys()
+    for medio in disponibles:
+        submenu.append('/noticias %s\n'%medio)
+    return submenu
 
-  news_feed=[]
-  for entry in item:   
-      #get description, url, and thumbnail
-      desc = entry.findtext('title') 
-      link = entry.findtext('guid') 
-      
-      news_feed.append('%s\n%s'%(desc,link))
-  return news_feed
+  else:
+    salida = requests.get(dictUrls[fuente])
+    reddit_root = etree.fromstring(salida.text)
+    item = reddit_root.findall('channel/item')
 
 
-if __name__ == '__main__':
-  print (funcion_noticias(['el_pais']))
+    news_feed=[]
+    for entry in item:   
+        #get description, url, and thumbnail
+        desc = entry.findtext('title') 
+        link = entry.findtext('guid') 
+        
+        news_feed.append('%s\n%s'%(desc,link))
+    return news_feed
+
+
+# if __name__ == '__main__':
+#   # print (funcion_noticias('el_pais'))
+#     # bd = mydb()
+#     # salida = bd.query('SELECT * FROM tblServerRssNoticias')
+#     # bd.close()
+#     # print(salida)

@@ -33,10 +33,6 @@ else :
 
 # FUNCIONES DEL BOT
 
-
-
-
-
 def start(bot, update):
   """ This function will be executed when '/start' command is received """
 
@@ -52,16 +48,13 @@ def random_number (bot, update):
 
 def noticias (bot, update, args):
     
-    disponibles = ['faro', 'marca','el_pais']
-
-
+   
     if len(args) == 0:
-      for medio in disponibles:
-        submenu= '/noticias %s\n'%medio
-        update.message.reply_text(submenu)
-    else:
-      for entrada in funcion_noticias(args):
-        update.message.reply_text(entrada)
+      medio = 'none'
+    else :
+      medio = args[0]
+    for entrada in funcion_noticias(medio):
+      update.message.reply_text(entrada)
 
 def track_mensajeria(bot, update, args):
   logger.info(args)
