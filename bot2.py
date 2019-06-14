@@ -36,6 +36,7 @@ else :
 
 def start(bot, update):
   """ This function will be executed when '/start' command is received """
+  bot.send_chat_action(chat_id=chat_id, action=telegram.ChatAction.TYPING)
   message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
   bot.send_message(chat_id=update.message.chat_id, text=message)
  
