@@ -38,7 +38,6 @@ def start(bot, update):
 
   message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
   bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-  time.sleep(2)
   bot.send_message(chat_id=update.message.chat_id, text=message)
  
 
@@ -54,7 +53,9 @@ def noticias (bot, update, args):
     else :
       medio = args[0]
     for entrada in funcion_noticias(medio):
-      update.message.reply_text(entrada)
+      # update.message.reply_text(entrada)
+      bot.send_message(chat_id=update.message.chat_id,
+                     parse_mode='markdown', text=entrada)
 
 def track_mensajeria(bot, update, args):
   logger.info(args)
