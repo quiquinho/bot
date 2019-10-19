@@ -69,9 +69,9 @@ def funcion_noticias(fuente='none'):
 
 
 
-# if __name__ == '__main__':
-#   # print (funcion_noticias('el_pais'))
-#     # bd = mydb()
-#     # salida = bd.query('SELECT * FROM tblServerRssNoticias')
-#     # bd.close()
-#     # print(salida)
+if __name__ == '__main__':
+  print (funcion_noticias('el_pais'))
+  bd = mydb()
+  salida = bd.query('SELECT * FROM tblServerRssNoticias')
+  bd.close()
+  print(salida)
