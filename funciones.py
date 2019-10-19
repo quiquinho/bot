@@ -66,6 +66,9 @@ def funcion_noticias(fuente='none'):
     return news_feed
 
 
+
+
+
 # if __name__ == '__main__':
 #   # print (funcion_noticias('el_pais'))
 #     # bd = mydb()
