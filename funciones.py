@@ -55,7 +55,7 @@ def funcion_noticias(fuente='none'):
     submenu=[]
     disponibles=dictUrls.keys()
     for medio in disponibles:
-        submenu.append('/noticias *%s*\n'%medio)
+        submenu.append('/noticias %s\n'%medio)
     return submenu
 
   else:

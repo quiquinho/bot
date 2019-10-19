@@ -53,9 +53,9 @@ def noticias (bot, update, args):
     else :
       medio = args[0]
     for entrada in funcion_noticias(medio):
-      # update.message.reply_text(entrada)
-      bot.send_message(chat_id=update.message.chat_id,
-                     parse_mode='markdown', text=entrada)
+      update.message.reply_text(entrada)
+      # bot.send_message(chat_id=update.message.chat_id,
+                     # parse_mode='markdown', text=entrada)
 
 def track_mensajeria(bot, update, args):
   logger.info(args)
