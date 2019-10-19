@@ -46,10 +46,7 @@ def funcion_noticias(fuente='none'):
   for medio in news :
     dictUrls.update({medio[0]:medio[1]})
   
-  try:
-    fuente = dictUrls[fuente]
-  except:
-    fuente='none'
+
     
   if fuente == 'none': 
     submenu=[]
