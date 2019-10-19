@@ -49,7 +49,7 @@ def random_number (bot, update):
 def noticias (bot, update, args):
     
    
-    if len(args) == 0:
+    if len(args) == 0 :
       medio = 'none'
     else :
       medio = args[0]
@@ -64,8 +64,6 @@ def track_mensajeria(bot, update, args):
 
 def perrete (bot, update):
   bot.send_photo(chat_id=update.message.chat_id, photo=funcion_get_perrete())
-
-
 
 def plain_text(bot, update):
     """ This function will be executed when plain text message is received """

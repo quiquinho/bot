@@ -46,13 +46,16 @@ def funcion_noticias(fuente='none'):
   for medio in news :
     dictUrls.update({medio[0]:medio[1]})
   
-
-
+  try:
+    fuente = dictUrls[fuente]
+  except:
+    fuente='none'
+    
   if fuente == 'none': 
     submenu=[]
     disponibles=dictUrls.keys()
     for medio in disponibles:
-        submenu.append('/noticias %s\n'%medio)
+        submenu.append('/noticias *%s*\n'%medio)
     return submenu
 
   else:
@@ -74,9 +77,9 @@ def funcion_noticias(fuente='none'):
 
 
 
-# if __name__ == '__main__':
-#   print(funcion_noticias('el_pais'))
-#   # bd = mydb()
-#   # salida = bd.query('SELECT * FROM tblServerRssNoticias')
-#   # bd.close()
-#   # print(salida)
+if __name__ == '__main__':
+  print(funcion_noticias('sensacine'))
+# #   # bd = mydb()
+# #   # salida = bd.query('SELECT * FROM tblServerRssNoticias')
+# #   # bd.close()
+# #   # print(salida)
