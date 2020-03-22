@@ -3,7 +3,7 @@ import pymysql
 class mydb (object):
     """docstring for mydb """
     def __init__(self):
-        self.conn = pymysql.connect(host='remotemysql.com', user='LCXMRhHRX9', passwd='OYKJURnYKh', db='LCXMRhHRX9')
+        self.conn = pymysql.connect(host='quiquinho.duckdns.org', user='quique', passwd='bot', db='dilema')
         
     def query( self, sql ) :
         
