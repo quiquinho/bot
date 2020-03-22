@@ -37,7 +37,7 @@ def funcion_noticias(fuente='none'):
   
   dictUrls = {}
   bd = mydb()
-  news = bd.query('SELECT * FROM tblServerRssNoticias')
+  news = bd.query('SELECT * FROM bot.noticias')
   print(news)
   bd.close()
 
