@@ -65,39 +65,9 @@ def noticias (bot, update, args):
                      # parse_mode='markdown', text=entrada)
 
 def track_mensajeria(bot, update, args):
-  # logger.info(args)
-  # message = funcion_track_mensajeria(args)
-  # bot.send_message(chat_id=update.message.chat_id, text=message)
-
-  # Create Inline Keyboard
-  text = "Could you type their phone number, please?"
-  IKM = InlineKeyboardMarkup(
-    inline_keyboard = list(
-      list(
-        InlineKeyboardButton(1),
-        InlineKeyboardButton(2),
-        InlineKeyboardButton(3)
-      ),
-      list(
-        InlineKeyboardButton(4),
-        InlineKeyboardButton(5),
-        InlineKeyboardButton(6)
-      ),
-      list(
-        InlineKeyboardButton(7),
-        InlineKeyboardButton(8),
-        InlineKeyboardButton(9)
-      ),
-      list(
-        InlineKeyboardButton("*"),
-        InlineKeyboardButton(0),
-        InlineKeyboardButton("#")
-      )
-    )
-  )
-
-  # Send Inline Keyboard
-  bot.send_message(chat_id=update.message.chat_id, text, reply_markup = IKM)
+  logger.info(args)
+  message = funcion_track_mensajeria(args)
+  bot.send_message(chat_id=update.message.chat_id, text=message)
 
 
 def perrete (bot, update):
