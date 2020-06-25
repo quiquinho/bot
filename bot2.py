@@ -36,15 +36,15 @@ else :
 def start(bot, update):
   """ This function will be executed when '/start' command is received """
 
-#   message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
-#   bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-#   bot.send_message(chat_id=update.message.chat_id, text=message)
+  message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
+  bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+  bot.send_message(chat_id=update.message.chat_id, text=message)
  
-  menuKeyboard = types.InlineKeyboardMarkup()
-  menuKeyboard.add(types.InlineKeyboardButton('Button1', callback_data='button1'),
-           types.InlineKeyboardButton('Button2', callback_data='button2'))
+#   menuKeyboard = types.InlineKeyboardMarkup()
+#   menuKeyboard.add(types.InlineKeyboardButton('Button1', callback_data='button1'),
+#            types.InlineKeyboardButton('Button2', callback_data='button2'))
 
-  bot.send_message(chat_id=update.message.chat_id, "Menu", reply_markup=menuKeyboard)
+#   bot.send_message(chat_id=update.message.chat_id, "Menu", reply_markup=menuKeyboard)
 
 
 
