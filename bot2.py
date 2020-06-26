@@ -83,17 +83,41 @@ def listar (bot, update):
                      parse_mode='markdown', text=message)
 
 
+def menu (bot, update):
+    """ This function will be executed when plain text message is received """
+    text = update.message.text
+    keyboard = [[InlineKeyboardButton("😖 Option 1", callback_data='1'),
+                 InlineKeyboardButton("🚅 Option 2", callback_data='2')],
+ 
+                [InlineKeyboardButton("🛀 Option 3", callback_data='3')]]
+ 
+    reply_markup = InlineKeyboardMarkup(keyboard)
+ 
+    update.message.reply_text('Please choose:', reply_markup=reply_markup)    
+
+def button(bot, update):
+    query = update.callback_query
+    
+    print(query.data)
+
+
+    bot.editMessageText(text="Selected option: %s" % query.data,
+                        chat_id=query.message.chat_id,
+                        message_id=query.message.message_id)
+
+
 
 if __name__ == '__main__':
     logger.info("Starting bot")
     updater = Updater(TOKEN)
 
-    arrayFunciones = ['start','list','mensajeria','perrete','random','noticias']
+    arrayFunciones = ['start','list','menu','mensajeria','perrete','random','noticias']
 
 
     # Command handlers
     start_handler = CommandHandler('start', start)
     list_handler = CommandHandler('list', listar)
+    menu_handler = CommandHandler('menu', menu)
     mensajeria_handler = CommandHandler('mensajeria', track_mensajeria, pass_args=True)
     perrete_handler = CommandHandler('perrete', perrete)
     random_handler = CommandHandler("random", random_number)
@@ -109,6 +133,8 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(start_handler)
     updater.dispatcher.add_handler(mensajeria_handler)
     updater.dispatcher.add_handler(list_handler)
+    updater.dispatcher.add_handler(menu_handler)
+    updater.dispatcher.add_handler(CallbackQueryHandler(button))
     updater.dispatcher.add_handler(perrete_handler)
     updater.dispatcher.add_handler(plain_text_handler)
     updater.dispatcher.add_handler(random_handler)
