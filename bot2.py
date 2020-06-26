@@ -62,7 +62,11 @@ def start (bot, update):
                     InlineKeyboardButton("⚽ Marca", callback_data='marca'),
                     InlineKeyboardButton("🇪🇸 El Pais", callback_data='el_pais')
                   ],
- 
+                  [
+                    InlineKeyboardButton("💻 Xataka", callback_data='xataka'),
+                    InlineKeyboardButton("🐢 NatGeo", callback_data='ng'),
+                    InlineKeyboardButton("💕 10M", callback_data='10minutos')
+                  ], 
                   [
                     InlineKeyboardButton("🗽 New York Times", callback_data='nyt'),
                     InlineKeyboardButton("📘 Cole", callback_data='cole'),
