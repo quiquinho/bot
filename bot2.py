@@ -33,44 +33,12 @@ else :
 
 # FUNCIONES DEL BOT
 
-def start(bot, update):
-  """ This function will be executed when '/start' command is received """
+# def start(bot, update):
+#   """ This function will be executed when '/start' command is received """
 
-  message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
-  bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-  bot.send_message(chat_id=update.message.chat_id, text=message)
- 
-
-def random_number (bot, update):
-    # Creating a handler-function for /random command
-    update.message.reply_text(funcion_random_number())
-
-def noticias (bot, update, args):
-    
-   
-    if len(args) == 0 :
-      medio = 'none'
-    else :
-      medio = args[0]
-    for entrada in funcion_noticias(medio):
-      update.message.reply_text(entrada)
-      # bot.send_message(chat_id=update.message.chat_id,
-                     # parse_mode='markdown', text=entrada)
-
-def track_mensajeria(bot, update, args):
-  logger.info(args)
-  message = funcion_track_mensajeria(args)
-  bot.send_message(chat_id=update.message.chat_id, text=message)
-
-
-def perrete (bot, update):
-  bot.send_photo(chat_id=update.message.chat_id, photo=funcion_get_perrete())
-
-def plain_text(bot, update):
-    """ This function will be executed when plain text message is received """
-    bot.send_message(chat_id=update.message.chat_id,
-                     parse_mode='markdown', text=funcion_contar_palabras(update.message.text))
-
+#   message = "Bienvenido al asistente personal! \n\n/list para ver tus opciones"
+#   bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+#   bot.send_message(chat_id=update.message.chat_id, text=message)
 
 def listar (bot, update):
     """ This function will be executed when plain text message is received """
@@ -82,63 +50,59 @@ def listar (bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      parse_mode='markdown', text=message)
 
-
-def menu (bot, update):
+def start (bot, update):
     """ This function will be executed when plain text message is received """
+
+
+
     text = update.message.text
-    keyboard = [[InlineKeyboardButton("😖 Option 1", callback_data='1'),
-                 InlineKeyboardButton("🚅 Option 2", callback_data='2')],
+    keyboard = [
+                  [
+                    InlineKeyboardButton("🗼 Faro de Vigo", callback_data='Faro'),
+                    InlineKeyboardButton("⚽ Marca", callback_data='marca'),
+                    InlineKeyboardButton("🇪🇸 El Pais", callback_data='el_pais')
+                  ],
  
-                [InlineKeyboardButton("🛀 Option 3", callback_data='3')]]
+                  [
+                    InlineKeyboardButton("🗽 New York Times", callback_data='nyt'),
+                    InlineKeyboardButton("📘 Cole", callback_data='cole'),
+                    InlineKeyboardButton("👑 Coronavirus", callback_data='coronavirus')
+                  ]
+                ]
  
     reply_markup = InlineKeyboardMarkup(keyboard)
  
-    update.message.reply_text('Please choose:', reply_markup=reply_markup)    
+    update.message.reply_text('Selecciona tu medio:', reply_markup=reply_markup)    
 
 def button(bot, update):
     query = update.callback_query
     
     print(query.data)
-
-
-    bot.editMessageText(text="Selected option: %s" % query.data,
-                        chat_id=query.message.chat_id,
-                        message_id=query.message.message_id)
-
+    for entrada in funcion_noticias(query.data):
+      query.message.reply_text(entrada)
+    bot.send_message(chat_id=query.message.chat_id,
+                     parse_mode='markdown', text='/start')
 
 
 if __name__ == '__main__':
     logger.info("Starting bot")
     updater = Updater(TOKEN)
 
-    arrayFunciones = ['start','list','menu','mensajeria','perrete','random','noticias']
-
+    arrayFunciones = ['start','list','menu']
 
     # Command handlers
     start_handler = CommandHandler('start', start)
     list_handler = CommandHandler('list', listar)
-    menu_handler = CommandHandler('menu', menu)
-    mensajeria_handler = CommandHandler('mensajeria', track_mensajeria, pass_args=True)
-    perrete_handler = CommandHandler('perrete', perrete)
-    random_handler = CommandHandler("random", random_number)
-    noticias_handler = CommandHandler("noticias", noticias, pass_args=True)
-
-    # Other handlers
-    plain_text_handler = MessageHandler(Filters.text, plain_text)
 
 
 
     # Add the handlers to the bot
     
     updater.dispatcher.add_handler(start_handler)
-    updater.dispatcher.add_handler(mensajeria_handler)
     updater.dispatcher.add_handler(list_handler)
-    updater.dispatcher.add_handler(menu_handler)
+
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    updater.dispatcher.add_handler(perrete_handler)
-    updater.dispatcher.add_handler(plain_text_handler)
-    updater.dispatcher.add_handler(random_handler)
-    updater.dispatcher.add_handler(noticias_handler)
+
 
 
 
