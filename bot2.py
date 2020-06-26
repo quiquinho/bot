@@ -65,7 +65,7 @@ def start (bot, update):
                   [
                     InlineKeyboardButton("💻 Xataka", callback_data='xataka'),
                     InlineKeyboardButton("🐢 NatGeo", callback_data='ng'),
-                    InlineKeyboardButton("💕 10M", callback_data='minutos')
+                    InlineKeyboardButton("🇬🇧 BBC", callback_data='minutos')
                   ], 
                   [
                     InlineKeyboardButton("🗽 New York Times", callback_data='nyt'),
