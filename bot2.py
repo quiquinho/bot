@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""Simple inline keyboard bot with multiple CallbackQueryHandlers.
-This Bot uses the Updater class to handle the bot.
-First, a few callback functions are defined as callback query handler. Then, those functions are
-passed to the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Example of a bot that uses inline keyboard that has multiple CallbackQueryHandlers arranged in a
-ConversationHandler.
-Send /start to initiate the conversation.
-Press Ctrl-C on the command line to stop the bot.
-"""
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler
 import logging
