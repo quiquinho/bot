@@ -12,66 +12,58 @@ def start(update, context):
     update.message.reply_text(
         text='Hola, bienvenido, qué deseas hacer?\n\nUsa /qr para generar un código qr.',
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(text='Generar qr', callback_data='qr')],
-            [InlineKeyboardButton(text='Sobre el autor', url='https://lugodev.com')],
+            [InlineKeyboardButton(text='News', callback_data='noticias')],
+            [InlineKeyboardButton(text='Meteo', callback_data='meteo')],
         ])
     )
 
 
-def qr_command_handler(update, context):
+def noticias_command_handler(update, context):
+    update.message.reply_text('Envíame el medio')
+    return INPUT_TEXT
 
-    update.message.reply_text('Envíame el texto para generarte un código QR')
-
+def meteo_command_handler(update, context):
+    update.message.reply_text('Envíame el dia')
     return INPUT_TEXT
 
 
-def qr_callback_handler(update, context):
 
+def noticias_callback_handler(update, context):
     query = update.callback_query
     query.answer()
-
     query.edit_message_text(
-        text='Envíame el texto para generarte un código QR'
+        text='Envíame el medio'
     )
+    return INPUT_TEXT
 
+def meteo_callback_handler(update, context):
+    query = update.callback_query
+    query.answer()
+    query.edit_message_text(
+        text='Envíame el dia'
+    )
     return INPUT_TEXT
 
 
-def generate_qr(text):
-
-    filename = text + '.jpg'
-
-    img = qrcode.make(text)
-    img.save(filename)
-
-    return filename
 
 
-def send_qr(filename, chat):
-
-    chat.send_action(
-        action=ChatAction.UPLOAD_PHOTO,
-        timeout=None
-    )
-
-    chat.send_photo(
-        photo=open(filename, 'rb')
-    )
-
-    os.unlink(filename)
 
 
-def input_text(update, context):
 
+
+def obtener_noticias(update, context):
     text = update.message.text
-
-    filename = generate_qr(text)
-
     chat = update.message.chat
-
-    send_qr(filename, chat)
-
     return ConversationHandler.END
+
+
+def obtener_meteo(update, context):
+    print('meteo')
+    text = update.message.text
+    chat = update.message.chat
+    print(chat)
+    return ConversationHandler.END
+
 
 
 
@@ -87,12 +79,14 @@ def main() -> None:
     dp.add_handler(ConversationHandler(
         entry_points=[
 
-            CommandHandler('qr', qr_command_handler),
-            CallbackQueryHandler(pattern='qr', callback=qr_callback_handler)
+            CommandHandler('noticias', noticias_command_handler),
+            CallbackQueryHandler(pattern='noticias', callback=noticias_callback_handler),
+            CommandHandler('meteo', meteo_command_handler),
+            CallbackQueryHandler(pattern='meteo', callback=meteo_callback_handler),            
         ],
 
         states={
-            INPUT_TEXT: [MessageHandler(Filters.text, input_text)]
+            INPUT_TEXT: [MessageHandler(Filters.text, obtener_noticias)]
         },
 
         fallbacks=[]
