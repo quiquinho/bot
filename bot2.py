@@ -54,6 +54,7 @@ def meteo_callback_handler(update, context):
 def obtener_noticias(update, context):
     text = update.message.text
     chat = update.message.chat
+    context.bot.send_message(chat_id=chat, text=text)
     return ConversationHandler.END
 
 
