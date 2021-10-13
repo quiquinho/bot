@@ -76,7 +76,7 @@ def start_over(update: Update, context: CallbackContext) -> int:
     # Instead of sending a new message, edit the message that
     # originated the CallbackQuery. This gives the feeling of an
     # interactive menu.
-    query.edit_message_text(text="Start handler, Choose a route", reply_markup=reply_markup)
+    query.edit_message_text(text="Bienvenido al asistente de Quique, seleccfiona una opción", reply_markup=reply_markup)
     return FIRST
 
 
