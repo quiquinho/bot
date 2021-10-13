@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 # Stages
 FIRST, SECOND = range(2)
 # Callback data
-ONE, TWO, FARO, FOUR,FIVE,SIX,SEVEN = range(7)
+ONE, TWO, FARO, AS,FIVE,SIX = range(6)
 
 
 def start(update: Update, context: CallbackContext) -> int:
@@ -86,19 +86,19 @@ def one(update: Update, context: CallbackContext) -> int:
     query.answer()
     keyboard = [
         [
-            [InlineKeyboardButton("Faro de vigo", callback_data=str(FARO)),
-            InlineKeyboardButton("4", callback_data=str(FOUR)),
-            InlineKeyboardButton("5", callback_data=str(FIVE)),
-            ],
-            [
-            InlineKeyboardButton("6", callback_data=str(SIX)),
-            InlineKeyboardButton("7", callback_data=str(SEVEN)),
-            ]
+            InlineKeyboardButton("Faro de vigo", callback_data=str(FARO)),
+            InlineKeyboardButton("Diario As", callback_data=str(AS)),
+        ],[
+            
+            InlineKeyboardButton("Medio 5", callback_data=str(FIVE)),
+            InlineKeyboardButton("Medio 6", callback_data=str(SIX)),
         ]
+
     ]
+
     reply_markup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text(
-        text="First CallbackQueryHandler, Choose a route", reply_markup=reply_markup
+        text="Estas en la sección de noticias, selecciona un medio", reply_markup=reply_markup
     )
     return FIRST
 
@@ -120,7 +120,7 @@ def two(update: Update, context: CallbackContext) -> int:
     return FIRST
 
 
-def three(update: Update, context: CallbackContext) -> int:
+def faro(update: Update, context: CallbackContext) -> int:
     """Show new choice of buttons"""
     query = update.callback_query
     query.answer()
@@ -141,7 +141,7 @@ def three(update: Update, context: CallbackContext) -> int:
     return SECOND
 
 
-def four(update: Update, context: CallbackContext) -> int:
+def diarioAs(update: Update, context: CallbackContext) -> int:
     """Show new choice of buttons"""
     query = update.callback_query
     query.answer()
@@ -204,26 +204,6 @@ def six(update: Update, context: CallbackContext) -> int:
     return SECOND
 
 
-def seven(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-
-    escribir(query , context, 'texto' )
-    
-    keyboard = [
-        [
-            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
-            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    text="Deseas volver a empezar?"
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
-    # Transfer to conversation state `SECOND`
-    return SECOND
-
 
 def end(update: Update, context: CallbackContext) -> int:
     """Returns `ConversationHandler.END`, which tells the
@@ -257,11 +237,10 @@ def main() -> None:
             FIRST: [
                 CallbackQueryHandler(one, pattern='^' + str(ONE) + '$'),
                 CallbackQueryHandler(two, pattern='^' + str(TWO) + '$'),
-                CallbackQueryHandler(three, pattern='^' + str(FARO) + '$'),
-                CallbackQueryHandler(four, pattern='^' + str(FOUR) + '$'),
-                CallbackQueryHandler(four, pattern='^' + str(FIVE) + '$'),
-                CallbackQueryHandler(four, pattern='^' + str(SIX) + '$'),
-                CallbackQueryHandler(four, pattern='^' + str(SEVEN) + '$'),
+                CallbackQueryHandler(faro, pattern='^' + str(FARO) + '$'),
+                CallbackQueryHandler(diarioAs, pattern='^' + str(AS) + '$'),
+                CallbackQueryHandler(five, pattern='^' + str(FIVE) + '$'),
+                CallbackQueryHandler(five, pattern='^' + str(SIX) + '$'),
             ],
             SECOND: [
                 CallbackQueryHandler(start_over, pattern='^' + str(ONE) + '$'),
