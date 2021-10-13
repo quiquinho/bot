@@ -57,7 +57,7 @@ def obtener_noticias(update, context):
     context.bot.send_message(chat_id=update.message.chat_id, text=text)
     context.bot.send_message(chat_id=update.message.chat_id, text='/start')
     return 'noticias'
-    return ConversationHandler.END
+    # return ConversationHandler.END
 
 
 def obtener_meteo(update, context):
