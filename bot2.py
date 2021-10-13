@@ -14,7 +14,6 @@ FIRST, SECOND = range(2)
 # Callback data
 ONE, TWO, THREE, FOUR = range(4)
 
-
 def start(update, context):
     """Send message on `/start`."""
     # Get user that sent /start and log his name
