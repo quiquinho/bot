@@ -56,7 +56,7 @@ def obtener_noticias(update, context):
     chat = update.message.chat
     context.bot.send_message(chat_id=update.message.chat_id, text=text)
     # context.bot.send_message(chat_id=update.message.chat_id, text='/start')
-    # return 'noticias'
+    return 'noticias'
     return ConversationHandler.END
 
 
@@ -92,7 +92,8 @@ def main() -> None:
             INPUT_TEXT: [MessageHandler(Filters.text, obtener_noticias)]
         },
 
-        fallbacks=[]
+        fallbacks=[],
+        conversation_timeout=6
     ))
 
     updater.start_polling()
