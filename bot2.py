@@ -1,58 +1,78 @@
-import logging
 import os
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
-)
-logger = logging.getLogger(__name__)
+import qrcode
+from telegram.ext import Updater, CommandHandler, ConversationHandler, CallbackQueryHandler, MessageHandler, Filters
+from telegram import ChatAction, InlineKeyboardMarkup, InlineKeyboardButton
 
 
-def start(update: Update, context: CallbackContext) -> None:
-    """Sends a message with three inline buttons attached."""
-    keyboard = [
-        [
-            InlineKeyboardButton("Faro de vigo", callback_data='faro'),
-            InlineKeyboardButton('Video', callback_data='https://www.youtube.com/watch?v=z73GXe984DQ')
-            # InlineKeyboardButton("As", url = 'https://www.marca.com'),
-        ],
-        [InlineKeyboardButton("Option 3", callback_data='3')],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    update.message.reply_text('Please choose:', reply_markup=reply_markup)
+INPUT_TEXT = 0
 
 
-def button(update: Update, context: CallbackContext) -> None:
-    """Parses the CallbackQuery and updates the message text."""
+def start(update, context):
+
+    update.message.reply_text(
+        text='Hola, bienvenido, qué deseas hacer?\n\nUsa /qr para generar un código qr.',
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='Generar qr', callback_data='qr')],
+            [InlineKeyboardButton(text='Sobre el autor', url='https://lugodev.com')],
+        ])
+    )
+
+
+def qr_command_handler(update, context):
+
+    update.message.reply_text('Envíame el texto para generarte un código QR')
+
+    return INPUT_TEXT
+
+
+def qr_callback_handler(update, context):
+
     query = update.callback_query
-
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
-    # query.edit_message_text(text=f"Selected option: {query.data}")
 
-    # print(query.data)
+    query.edit_message_text(
+        text='Envíame el texto para generarte un código QR'
+    )
 
-    escribir(context, query.data)
-    # escribir(context, '/start')
-    
-    
-    
-   
-    
-def escribir(context,mensaje):
-    chat = context._chat_id_and_data[0]
-    context.bot.send_message(chat_id=chat,
-                     parse_mode='markdown', text=mensaje)
-    
+    return INPUT_TEXT
 
 
-def help_command(update: Update, context: CallbackContext) -> None:
-    """Displays info on how to use the bot."""
-    update.message.reply_text("Use /start to test this bot.")
+def generate_qr(text):
+
+    filename = text + '.jpg'
+
+    img = qrcode.make(text)
+    img.save(filename)
+
+    return filename
+
+
+def send_qr(filename, chat):
+
+    chat.send_action(
+        action=ChatAction.UPLOAD_PHOTO,
+        timeout=None
+    )
+
+    chat.send_photo(
+        photo=open(filename, 'rb')
+    )
+
+    os.unlink(filename)
+
+
+def input_text(update, context):
+
+    text = update.message.text
+
+    filename = generate_qr(text)
+
+    chat = update.message.chat
+
+    send_qr(filename, chat)
+
+    return ConversationHandler.END
+
 
 
 def main() -> None:
@@ -60,17 +80,28 @@ def main() -> None:
     # Create the Updater and pass it your bot's token.
     updater = Updater(os.getenv("TOKEN"), use_context=True)
 
-    updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    updater.dispatcher.add_handler(CommandHandler('help', help_command))
+    dp = updater.dispatcher
 
-    # Start the Bot
+    dp.add_handler(CommandHandler('start', start))
+
+    dp.add_handler(ConversationHandler(
+        entry_points=[
+
+            CommandHandler('qr', qr_command_handler),
+            CallbackQueryHandler(pattern='qr', callback=qr_callback_handler)
+        ],
+
+        states={
+            INPUT_TEXT: [MessageHandler(Filters.text, input_text)]
+        },
+
+        fallbacks=[]
+    ))
+
     updater.start_polling()
-
-    # Run the bot until the user presses Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT
     updater.idle()
 
 
 if __name__ == '__main__':
+
     main()
