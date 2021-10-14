@@ -75,8 +75,4 @@ def funcion_noticias(fuente='none'):
 
 
 if __name__ == '__main__':
-  print(funcion_noticias('sensacine'))
-# #   # bd = mydb()
-# #   # salida = bd.query('SELECT * FROM tblServerRssNoticias')
-# #   # bd.close()
-# #   # print(salida)
+  pass

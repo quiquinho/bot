@@ -2,17 +2,7 @@
 # pylint: disable=C0116,W0613
 # This program is dedicated to the public domain under the CC0 license.
 
-"""Simple inline keyboard bot with multiple CallbackQueryHandlers.
-This Bot uses the Updater class to handle the bot.
-First, a few callback functions are defined as callback query handler. Then, those functions are
-passed to the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Example of a bot that uses inline keyboard that has multiple CallbackQueryHandlers arranged in a
-ConversationHandler.
-Send /start to initiate the conversation.
-Press Ctrl-C on the command line to stop the bot.
-"""
+
 import logging,os
 from funciones import *
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -33,7 +23,7 @@ logger = logging.getLogger(__name__)
 # Stages
 FIRST, SECOND = range(2)
 # Callback data
-ONE, TWO, FARO, AS, PAIS, MARCA = range(6)
+ONE, TWO, FARO, AS, PAIS, MARCA, PERRETE, START = range(8)
 
 
 # PRIMER NIVEL
@@ -64,13 +54,13 @@ def two(update: Update, context: CallbackContext) -> int:
     query.answer()
     keyboard = [
         [
-            InlineKeyboardButton("Volver", callback_data=str(ONE)),
-            InlineKeyboardButton("Medio", callback_data=str(FARO)),
+            InlineKeyboardButton("Volver", callback_data=str(START)),
+            InlineKeyboardButton("Perrete", callback_data=str(PERRETE)),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text(
-        text="Selecciona opción en meteo", reply_markup=reply_markup
+        text="Selecciona opción en humor", reply_markup=reply_markup
     )
     return FIRST
 
@@ -160,6 +150,25 @@ def marca(update: Update, context: CallbackContext) -> int:
     context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
     # Transfer to conversation state `SECOND`
     return SECOND
+def perrete (update: Update, context: CallbackContext):
+    query = update.callback_query
+    query.answer()    
+    context.bot.send_photo(chat_id=query.message.chat.id, photo=funcion_get_perrete())
+    keyboard = [
+        [
+            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
+            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    text="Deseas volver a empezar?"
+    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    # Transfer to conversation state `SECOND`
+    return SECOND
+
+
+
 
 #AUXILIARES
 def start(update: Update, context: CallbackContext) -> int:
@@ -174,7 +183,7 @@ def start(update: Update, context: CallbackContext) -> int:
     keyboard = [
         [
             InlineKeyboardButton("Noticias", callback_data=str(ONE)),
-            InlineKeyboardButton("Meteo", callback_data=str(TWO)),
+            InlineKeyboardButton("Humor", callback_data=str(TWO)),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -192,7 +201,7 @@ def start_over(update: Update, context: CallbackContext) -> int:
     keyboard = [
         [
             InlineKeyboardButton("Noticias", callback_data=str(ONE)),
-            InlineKeyboardButton("Meteo", callback_data=str(TWO)),
+            InlineKeyboardButton("Humor", callback_data=str(TWO)),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -236,6 +245,8 @@ def main() -> None:
                 CallbackQueryHandler(diarioAs, pattern='^' + str(AS) + '$'),
                 CallbackQueryHandler(pais, pattern='^' + str(PAIS) + '$'),
                 CallbackQueryHandler(marca, pattern='^' + str(MARCA) + '$'),
+                CallbackQueryHandler(perrete, pattern='^' + str(PERRETE) + '$'),
+                CallbackQueryHandler(start_over, pattern='^' + str(START) + '$'),
             ],
             SECOND: [
                 CallbackQueryHandler(start_over, pattern='^' + str(ONE) + '$'),
