@@ -123,9 +123,9 @@ def pais(update: Update, context: CallbackContext) -> int:
     query.answer()
 
     news = funcion_noticias('el_pais')
+    news = news[:10]
     for new in news:
         escribir(query , context, new )
-    
     keyboard = [
         [
             InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
