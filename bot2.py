@@ -80,7 +80,7 @@ def faro(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
 
-    news = funcion_noticias('faro').reverse()
+    news = funcion_noticias('faro')
     for new in news:
         escribir(query , context, new )
     
@@ -101,7 +101,7 @@ def diarioAs(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
 
-    news = funcion_noticias('as').reverse()
+    news = funcion_noticias('as')
     for new in news:
         escribir(query , context, new )
     
@@ -122,7 +122,7 @@ def pais(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
 
-    news = funcion_noticias('el_pais').reverse()
+    news = funcion_noticias('el_pais')
     news = news[:10]
     for new in news:
         escribir(query , context, new )
@@ -144,7 +144,7 @@ def marca(update: Update, context: CallbackContext) -> int:
     query.answer()
 
 
-    news = funcion_noticias('marca').reverse()
+    news = funcion_noticias('marca')
     for new in news:
         escribir(query , context, new )
     
