@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # Stages
 FIRST, SECOND = range(2)
 # Callback data
-ONE, TWO, FARO, AS, PAIS, MARCA, PERRETE, START = range(8)
+ONE, TWO, FARO, AS, PAIS, MARCA, PERRETE, START, LOPE = range(9)
 
 
 # PRIMER NIVEL
@@ -32,13 +32,14 @@ def one(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
     keyboard = [
-        [
+        [   InlineKeyboardButton("Volver", callback_data=str(START)),
             InlineKeyboardButton("Faro de vigo", callback_data=str(FARO)),
             InlineKeyboardButton("El Pais", callback_data=str(PAIS)),
         ],[
             
             InlineKeyboardButton("Diario As", callback_data=str(AS)),
             InlineKeyboardButton("Marca", callback_data=str(MARCA)),
+            InlineKeyboardButton("Lope", callback_data=str(LOPE)),
         ]
 
     ]
@@ -150,7 +151,7 @@ def marca(update: Update, context: CallbackContext) -> int:
     context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
     # Transfer to conversation state `SECOND`
     return SECOND
-def perrete (update: Update, context: CallbackContext):
+def perrete (update: Update, context: CallbackContext)->int:
     query = update.callback_query
     query.answer()    
     context.bot.send_photo(chat_id=query.message.chat.id, photo=funcion_get_perrete())
@@ -166,8 +167,28 @@ def perrete (update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
     # Transfer to conversation state `SECOND`
     return SECOND
+def lope (update: Update, context: CallbackContext)->int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
 
 
+    news = funcion_noticias('cole')
+    for new in news:
+        escribir(query , context, new )
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
+            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    text="Deseas volver a empezar?"
+    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    # Transfer to conversation state `SECOND`
+    return SECOND
 
 
 #AUXILIARES
@@ -246,6 +267,7 @@ def main() -> None:
                 CallbackQueryHandler(pais, pattern='^' + str(PAIS) + '$'),
                 CallbackQueryHandler(marca, pattern='^' + str(MARCA) + '$'),
                 CallbackQueryHandler(perrete, pattern='^' + str(PERRETE) + '$'),
+                CallbackQueryHandler(lope, pattern='^' + str(LOPE) + '$'),
                 CallbackQueryHandler(start_over, pattern='^' + str(START) + '$'),
             ],
             SECOND: [
