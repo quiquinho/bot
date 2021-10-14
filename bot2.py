@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # pylint: disable=C0116,W0613
 # This program is dedicated to the public domain under the CC0 license.
@@ -15,6 +14,7 @@ Send /start to initiate the conversation.
 Press Ctrl-C on the command line to stop the bot.
 """
 import logging,os
+from funciones import *
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Updater,
@@ -30,13 +30,138 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
 # Stages
 FIRST, SECOND = range(2)
 # Callback data
-ONE, TWO, FARO, AS,FIVE,SIX = range(6)
+ONE, TWO, FARO, AS, PAIS, MARCA = range(6)
 
 
+# PRIMER NIVEL
+def one(update: Update, context: CallbackContext) -> int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
+    keyboard = [
+        [
+            InlineKeyboardButton("Faro de vigo", callback_data=str(FARO)),
+            InlineKeyboardButton("El Pais", callback_data=str(PAIS)),
+        ],[
+            
+            InlineKeyboardButton("Diario As", callback_data=str(AS)),
+            InlineKeyboardButton("Marca", callback_data=str(MARCA)),
+        ]
+
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    query.edit_message_text(
+        text="Estas en la sección de noticias, selecciona un medio", reply_markup=reply_markup
+    )
+    return FIRST
+def two(update: Update, context: CallbackContext) -> int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
+    keyboard = [
+        [
+            InlineKeyboardButton("Volver", callback_data=str(ONE)),
+            InlineKeyboardButton("Medio", callback_data=str(FARO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    query.edit_message_text(
+        text="Selecciona opción en meteo", reply_markup=reply_markup
+    )
+    return FIRST
+
+# SEGUNDO NIVEL
+def faro(update: Update, context: CallbackContext) -> int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
+
+    news = funcion_noticias('faro')
+    for new in news:
+        escribir(query , context, new )
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
+            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    text="Deseas volver a empezar?"
+    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    # Transfer to conversation state `SECOND`
+    return SECOND
+def diarioAs(update: Update, context: CallbackContext) -> int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
+
+    news = funcion_noticias('as')
+    for new in news:
+        escribir(query , context, new )
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
+            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    text="Deseas volver a empezar?"
+    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    # Transfer to conversation state `SECOND`
+    return SECOND
+def pais(update: Update, context: CallbackContext) -> int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
+
+    news = funcion_noticias('el_pais')
+    for new in news:
+        escribir(query , context, new )
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
+            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    text="Deseas volver a empezar?"
+    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    # Transfer to conversation state `SECOND`
+    return SECOND
+def marca(update: Update, context: CallbackContext) -> int:
+    """Show new choice of buttons"""
+    query = update.callback_query
+    query.answer()
+
+
+    news = funcion_noticias('marca')
+    for new in news:
+        escribir(query , context, new )
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
+            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    text="Deseas volver a empezar?"
+    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    # Transfer to conversation state `SECOND`
+    return SECOND
+
+#AUXILIARES
 def start(update: Update, context: CallbackContext) -> int:
     """Send message on `/start`."""
     # Get user that sent /start and log his name
@@ -54,11 +179,9 @@ def start(update: Update, context: CallbackContext) -> int:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
-    update.message.reply_text("Start handler, Choose a route", reply_markup=reply_markup)
+    update.message.reply_text("Bienvenido al asistente de Quique, selecciona una opción", reply_markup=reply_markup)
     # Tell ConversationHandler that we're in state `FIRST` now
     return FIRST
-
-
 def start_over(update: Update, context: CallbackContext) -> int:
     """Prompt same text & keyboard as `start` does but not as new message"""
     # Get CallbackQuery from Update
@@ -76,147 +199,19 @@ def start_over(update: Update, context: CallbackContext) -> int:
     # Instead of sending a new message, edit the message that
     # originated the CallbackQuery. This gives the feeling of an
     # interactive menu.
-    query.edit_message_text(text="Bienvenido al asistente de Quique, seleccfiona una opción", reply_markup=reply_markup)
+    query.edit_message_text(text="Bienvenido al asistente de Quique, selecciona una opción", reply_markup=reply_markup)
     return FIRST
-
-
-def one(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-    keyboard = [
-        [
-            InlineKeyboardButton("Faro de vigo", callback_data=str(FARO)),
-            InlineKeyboardButton("Diario As", callback_data=str(AS)),
-        ],[
-            
-            InlineKeyboardButton("Medio 5", callback_data=str(FIVE)),
-            InlineKeyboardButton("Medio 6", callback_data=str(SIX)),
-        ]
-
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_text(
-        text="Estas en la sección de noticias, selecciona un medio", reply_markup=reply_markup
-    )
-    return FIRST
-
-
-def two(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-    keyboard = [
-        [
-            InlineKeyboardButton("Volver", callback_data=str(ONE)),
-            InlineKeyboardButton("Medio", callback_data=str(FARO)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_text(
-        text="Second CallbackQueryHandler, Choose a route", reply_markup=reply_markup
-    )
-    return FIRST
-
-
-def faro(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-
-    escribir(query , context, 'texto' )
-    
-    keyboard = [
-        [
-            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
-            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    text="Deseas volver a empezar?"
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
-    # Transfer to conversation state `SECOND`
-    return SECOND
-
-
-def diarioAs(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-
-    escribir(query , context, 'texto' )
-    
-    keyboard = [
-        [
-            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
-            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    text="Deseas volver a empezar?"
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
-    # Transfer to conversation state `SECOND`
-    return SECOND
-
-
-def five(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-
-    escribir(query , context, 'texto' )
-    
-    keyboard = [
-        [
-            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
-            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    text="Deseas volver a empezar?"
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
-    # Transfer to conversation state `SECOND`
-    return SECOND
-
-
-def six(update: Update, context: CallbackContext) -> int:
-    """Show new choice of buttons"""
-    query = update.callback_query
-    query.answer()
-
-    escribir(query , context, 'texto' )
-    
-    keyboard = [
-        [
-            InlineKeyboardButton("Si, volver a empezar", callback_data=str(ONE)),
-            InlineKeyboardButton("Nah, Ya basta ...", callback_data=str(TWO)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    text="Deseas volver a empezar?"
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
-    # Transfer to conversation state `SECOND`
-    return SECOND
-
-
-
 def end(update: Update, context: CallbackContext) -> int:
     """Returns `ConversationHandler.END`, which tells the
     ConversationHandler that the conversation is over.
     """
     query = update.callback_query
     query.answer()
-    query.edit_message_text(text="See you next time!")
+    query.edit_message_text(text="Nos vemos en la proxima!")
+    escribir(query , context, '/start' )
     return ConversationHandler.END
-
 def escribir(query , context, texto ):
     context.bot.send_message(chat_id=query.message.chat.id, text=texto)
-
 def main() -> None:
     """Run the bot."""
     # Create the Updater and pass it your bot's token.
@@ -239,8 +234,8 @@ def main() -> None:
                 CallbackQueryHandler(two, pattern='^' + str(TWO) + '$'),
                 CallbackQueryHandler(faro, pattern='^' + str(FARO) + '$'),
                 CallbackQueryHandler(diarioAs, pattern='^' + str(AS) + '$'),
-                CallbackQueryHandler(five, pattern='^' + str(FIVE) + '$'),
-                CallbackQueryHandler(five, pattern='^' + str(SIX) + '$'),
+                CallbackQueryHandler(pais, pattern='^' + str(PAIS) + '$'),
+                CallbackQueryHandler(marca, pattern='^' + str(MARCA) + '$'),
             ],
             SECOND: [
                 CallbackQueryHandler(start_over, pattern='^' + str(ONE) + '$'),
