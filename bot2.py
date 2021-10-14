@@ -2,7 +2,6 @@
 # pylint: disable=C0116,W0613
 # This program is dedicated to the public domain under the CC0 license.
 
-
 import logging,os
 from funciones import *
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
